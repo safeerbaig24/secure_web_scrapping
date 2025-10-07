@@ -1,7 +1,20 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  headers: async () => [
+    {
+      source: "/(.*)",
+      headers: [
+        { key: "Cache-Control", value: "no-store, no-cache, must-revalidate" },
+        { key: "Pragma", value: "no-cache" },
+        { key: "Expires", value: "0" },
+        { key: "X-Frame-Options", value: "DENY" },
+        { key: "X-Content-Type-Options", value: "nosniff" },
+        {
+          key: "Content-Security-Policy",
+          value:
+            "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none';",
+        },
+      ],
+    },
+  ],
 };
-
-export default nextConfig;
+module.exports = nextConfig;
