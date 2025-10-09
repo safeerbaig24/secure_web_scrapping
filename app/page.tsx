@@ -5,6 +5,8 @@ import html2canvas from "html2canvas-pro";
 
 import { secureData } from "./data";
 
+
+
 export default function SecureViewer() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isRendering, setIsRendering] = useState(true);
@@ -55,30 +57,61 @@ export default function SecureViewer() {
     setError(null);
 
     const timer = window.setTimeout(() => {
-      void html2canvas(source, {
-        backgroundColor: "#ffffff",
-        scale: window.devicePixelRatio > 1 ? 2 : 1.5,
-        useCORS: true,
-        logging: false,
-      })
-        .then((canvas) => {
-          if (cancelled) return;
-          canvas.style.display = "block";
-          canvas.style.width = "100%";
-          canvas.style.height = "auto";
-          slot.replaceChildren(canvas);
-        })
-        .catch((cause) => {
-          if (cancelled) return;
-          console.error("Failed to render secure canvas", cause);
+      const attemptOptions = [
+        {
+          backgroundColor: "#ffffff",
+          scale: window.devicePixelRatio > 1 ? 2 : 1.5,
+          useCORS: true,
+          logging: false,
+          foreignObjectRendering: true,
+          allowTaint: true,
+        },
+        {
+          backgroundColor: "#ffffff",
+          scale: window.devicePixelRatio > 1 ? 2 : 1.5,
+          useCORS: true,
+          logging: false,
+        },
+      ];
+
+      const render = async () => {
+        let lastError: unknown = null;
+
+        
+        if (cancelled) return;
+
+        for (const options of attemptOptions) {
+          try {
+            const canvas = await html2canvas(source, options);
+            if (cancelled) return;
+
+            canvas.style.display = "block";
+            canvas.style.width = "100%";
+            canvas.style.height = "auto";
+            slot.replaceChildren(canvas);
+            setError(null);
+            setIsRendering(false);
+            return;
+          } catch (cause) {
+            lastError = cause;
+            console.error("html2canvas attempt failed", options, cause);
+          }
+        }
+
+        if (!cancelled) {
           slot.replaceChildren();
           setError("Unable to render secure content.");
-        })
-        .finally(() => {
-          if (!cancelled) {
-            setIsRendering(false);
+          setIsRendering(false);
+          if (lastError) {
+            console.error(
+              "html2canvas failed for all attempts",
+              lastError instanceof Error ? lastError.message : lastError
+            );
           }
-        });
+        }
+      };
+
+      void render();
     }, 60);
 
     return () => {
