@@ -210,11 +210,11 @@ const appleSections: AppleSection[] = [
 
 const BookmarkIcon = () => (
   <svg
+    xmlns="http://www.w3.org/2000/svg"
     width="28"
     height="28"
     viewBox="0 0 24 24"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
   >
     <path
       d="M6 3.5C6 2.67157 6.67157 2 7.5 2H16.5C17.3284 2 18 2.67157 18 3.5V21L12 17.5L6 21V3.5Z"
@@ -228,11 +228,11 @@ const BookmarkIcon = () => (
 
 const CelebrationGraphic = () => (
   <svg
+    xmlns="http://www.w3.org/2000/svg"
     width="160"
     height="160"
     viewBox="0 0 160 160"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
   >
     <rect x="16" y="88" width="128" height="48" rx="12" fill="#1d4ed8" />
     <path
@@ -978,4 +978,3 @@ export const secureData: Step[] = rawSteps.map((step) => ({
     </StepLayout>
   ),
 }));
-
