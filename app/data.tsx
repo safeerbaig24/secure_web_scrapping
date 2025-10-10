@@ -5,13 +5,13 @@ import { Fragment, ReactNode } from "react";
 type RawStep = {
   title: string;
   subtitle?: string;
-  body: ReactNode;
+  body: () => ReactNode;
 };
 
 type Step = {
   title: string;
   subtitle?: string;
-  content: ReactNode;
+  render: () => ReactNode;
 };
 
 const terminologyCards: { label: string; accent?: boolean }[] = [
@@ -209,72 +209,25 @@ const appleSections: AppleSection[] = [
 ];
 
 const BookmarkIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="28"
-    height="28"
-    viewBox="0 0 24 24"
-    fill="none"
-  >
-    <path
-      d="M6 3.5C6 2.67157 6.67157 2 7.5 2H16.5C17.3284 2 18 2.67157 18 3.5V21L12 17.5L6 21V3.5Z"
-      stroke="#1d4ed8"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
+  <img
+    src="/bookmark-icon.svg"
+    alt=""
+    width={28}
+    height={28}
+    draggable={false}
+    style={{ display: "block" }}
+  />
 );
 
 const CelebrationGraphic = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="160"
-    height="160"
-    viewBox="0 0 160 160"
-    fill="none"
-  >
-    <rect x="16" y="88" width="128" height="48" rx="12" fill="#1d4ed8" />
-    <path
-      d="M32 96L80 128L128 96V80C128 66.7452 117.255 56 104 56H56C42.7452 56 32 66.7452 32 80V96Z"
-      fill="#ffffff"
-    />
-    <path
-      d="M80 120L124 92"
-      stroke="#0f172a"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M80 120L36 92"
-      stroke="#0f172a"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle cx="52" cy="48" r="18" fill="#f97316" />
-    <circle cx="80" cy="40" r="18" fill="#22c55e" />
-    <circle cx="108" cy="48" r="18" fill="#ef4444" />
-    <path
-      d="M52 30C52 30 51 18 40 16"
-      stroke="#ea580c"
-      strokeWidth="4"
-      strokeLinecap="round"
-    />
-    <path
-      d="M80 22C80 22 80 10 93 8"
-      stroke="#15803d"
-      strokeWidth="4"
-      strokeLinecap="round"
-    />
-    <path
-      d="M108 30C108 30 109 18 120 16"
-      stroke="#dc2626"
-      strokeWidth="4"
-      strokeLinecap="round"
-    />
-  </svg>
+  <img
+    src="/celebration-graphic.svg"
+    alt=""
+    width={160}
+    height={160}
+    draggable={false}
+    style={{ display: "block" }}
+  />
 );
 
 const StepLayout = ({
@@ -485,7 +438,7 @@ const rawSteps: RawStep[] = [
   {
     title: "Overview",
     subtitle: "5 key financial terminologies:",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <p
           style={{
@@ -520,7 +473,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "Congratulations",
-    body: (
+    body: () => (
       <div
         style={{
           marginTop: "12px",
@@ -566,7 +519,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "What Are Assets?",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <p
           style={{
@@ -606,7 +559,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "Overview",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <p
           style={{
@@ -652,7 +605,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "Both Types Of Assets Together",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <p
           style={{
@@ -784,7 +737,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "What Does It Show?",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <div
           style={{
@@ -838,7 +791,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "Sample Income Statement",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <div style={{ marginBottom: "16px", color: "#111827" }}>
           <p style={{ fontWeight: 700, marginBottom: "4px" }}>A Limited</p>
@@ -855,7 +808,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "Step 3",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <div
           style={{
@@ -928,7 +881,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "Needed Information In Highlighted Cells",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <AppleIncomeTable highlight />
         <p
@@ -949,7 +902,7 @@ const rawSteps: RawStep[] = [
   },
   {
     title: "Apple's 3 Year Income Statements",
-    body: (
+    body: () => (
       <div style={{ marginTop: "16px" }}>
         <AppleIncomeTable />
         <p
@@ -972,9 +925,9 @@ const rawSteps: RawStep[] = [
 export const secureData: Step[] = rawSteps.map((step) => ({
   title: step.title,
   subtitle: step.subtitle,
-  content: (
+  render: () => (
     <StepLayout title={step.title} subtitle={step.subtitle}>
-      {step.body}
+      {step.body()}
     </StepLayout>
   ),
 }));
