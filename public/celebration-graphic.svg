@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none">
+  <rect x="16" y="88" width="128" height="48" rx="12" fill="#1d4ed8" />
+  <path
+    d="M32 96L80 128L128 96V80C128 66.7452 117.255 56 104 56H56C42.7452 56 32 66.7452 32 80V96Z"
+    fill="#ffffff"
+  />
+  <path
+    d="M80 120L124 92"
+    stroke="#0f172a"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M80 120L36 92"
+    stroke="#0f172a"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <circle cx="52" cy="48" r="18" fill="#f97316" />
+  <circle cx="80" cy="40" r="18" fill="#22c55e" />
+  <circle cx="108" cy="48" r="18" fill="#ef4444" />
+  <path d="M52 30C52 30 51 18 40 16" stroke="#ea580c" stroke-width="4" stroke-linecap="round" />
+  <path d="M80 22C80 22 80 10 93 8" stroke="#15803d" stroke-width="4" stroke-linecap="round" />
+  <path d="M108 30C108 30 109 18 120 16" stroke="#dc2626" stroke-width="4" stroke-linecap="round" />
+</svg>

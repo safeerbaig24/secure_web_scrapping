@@ -7,7 +7,7 @@ const nextConfig = {
         { key: "Pragma", value: "no-cache" },
         { key: "Expires", value: "0" },
         { key: "X-Frame-Options", value: "DENY" },
-        { key: "X-Content-Type-Options", value: "nosniff" },
+        
         {
           key: "Content-Security-Policy",
           value:

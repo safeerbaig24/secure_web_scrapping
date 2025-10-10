@@ -5,7 +5,39 @@ import html2canvas from "html2canvas-pro";
 
 import { secureData } from "./data";
 
+const waitForFonts = () => {
+  if (typeof document === "undefined" || !("fonts" in document)) {
+    return Promise.resolve();
+  }
+  return document.fonts.ready.catch(() => undefined);
+};
 
+const waitForImages = async (root: HTMLElement) => {
+  const images = Array.from(root.querySelectorAll("img"));
+  await Promise.all(
+    images.map(
+      (image) =>
+        new Promise<void>((resolve) => {
+          if (image.complete && image.naturalWidth !== 0) {
+            resolve();
+            return;
+          }
+          const settle = () => {
+            image.removeEventListener("load", settle);
+            image.removeEventListener("error", settle);
+            resolve();
+          };
+          image.addEventListener("load", settle, { once: true });
+          image.addEventListener("error", settle, { once: true });
+        })
+    )
+  );
+};
+
+const waitForNextFrame = () =>
+  new Promise<void>((resolve) => {
+    requestAnimationFrame(() => resolve());
+  });
 
 export default function SecureViewer() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -17,6 +49,7 @@ export default function SecureViewer() {
   const captureRef = useRef<HTMLDivElement>(null);
 
   const totalSteps = secureData.length;
+  const step = secureData[currentStep];
   const atFirst = currentStep === 0;
   const atLast = currentStep === totalSteps - 1;
 
@@ -48,36 +81,44 @@ export default function SecureViewer() {
 
   useEffect(() => {
     const source = captureRef.current;
-    const host = canvasHostRef.current;
     const slot = canvasSlotRef.current;
-    if (!source || !host || !slot) return;
+    if (!source || !slot) return;
 
     let cancelled = false;
     setIsRendering(true);
     setError(null);
 
     const timer = window.setTimeout(() => {
+      const pixelScale = window.devicePixelRatio > 1 ? 2 : 1.5;
       const attemptOptions = [
         {
           backgroundColor: "#ffffff",
-          scale: window.devicePixelRatio > 1 ? 2 : 1.5,
+          scale: pixelScale,
+          useCORS: true,
+          logging: false,
+        },
+        {
+          backgroundColor: "#ffffff",
+          scale: pixelScale,
           useCORS: true,
           logging: false,
           foreignObjectRendering: true,
           allowTaint: true,
-        },
-        {
-          backgroundColor: "#ffffff",
-          scale: window.devicePixelRatio > 1 ? 2 : 1.5,
-          useCORS: true,
-          logging: false,
         },
       ];
 
       const render = async () => {
         let lastError: unknown = null;
 
-        
+        if (cancelled) return;
+
+        try {
+          await waitForFonts();
+          await waitForImages(source);
+        } catch (resourceError) {
+          console.warn("Waiting for resources failed", resourceError);
+        }
+        await waitForNextFrame();
         if (cancelled) return;
 
         for (const options of attemptOptions) {
@@ -112,7 +153,7 @@ export default function SecureViewer() {
       };
 
       void render();
-    }, 60);
+    }, 80);
 
     return () => {
       cancelled = true;
@@ -180,7 +221,7 @@ export default function SecureViewer() {
             >
               Reference View (HTML)
             </h3>
-            {secureData[currentStep].content}
+            {step.render()}
           </section>
 
           <section
@@ -222,8 +263,9 @@ export default function SecureViewer() {
                   width: "100%",
                   minHeight: "360px",
                   display: "flex",
-                  alignItems: "stretch",
+                  alignItems: "center",
                   justifyContent: "center",
+                  // border: "1px solid red",
                 }}
               />
               {isRendering && (
@@ -317,23 +359,22 @@ export default function SecureViewer() {
             </button>
           </div>
         </div>
-
-        <div
-          ref={captureRef}
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            top: "-10000px",
-            left: "-10000px",
-            width: "920px",
-            backgroundColor: "#ffffff",
-            padding: "32px",
-            borderRadius: "16px",
-            boxShadow: "0 24px 60px rgba(15, 23, 42, 0.08)",
-          }}
-        >
-          {secureData[currentStep].content}
-        </div>
+      </div>
+      <div
+        ref={captureRef}
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: "-10000px",
+          left: "-10000px",
+          width: "920px",
+          backgroundColor: "#ffffff",
+          padding: "32px",
+          borderRadius: "16px",
+          boxShadow: "0 24px 60px rgba(15, 23, 42, 0.08)",
+        }}
+      >
+        {step.render()}
       </div>
     </main>
   );
